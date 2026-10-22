@@ -45,7 +45,7 @@ def load_truth() -> pd.DataFrame:
 def _prf(tp: float, fp: float, fn: float):
     """Turn raw counts into (precision, recall, F1). The 'if' guards avoid dividing by zero
     (e.g. a detector that never fires has tp + fp = 0, so we report precision 0 rather than crash)."""
-    p = tp / (tp + fp) if tp + fp else 0.0
+    p = tp / (tp + fp) if tp + fp else 0.0  #Recall
     r = tp / (tp + fn) if tp + fn else 0.0
     f = 2 * p * r / (p + r) if p + r else 0.0
     return p, r, f

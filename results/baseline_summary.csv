@@ -1,0 +1,6 @@
+detector,row_precision,row_recall,row_f1,alarms,false_alarms,event_precision,event_recall,event_f1,mean_hours_to_detect
+static_threshold,0.6271,0.0398,0.0749,7,1,0.8571,1.0,0.9231,24.8
+seasonal_z>4,0.4788,0.1674,0.2481,51,35,0.3137,1.0,0.4776,18.35
+cohort_z>4,0.9715,0.1355,0.2378,7,0,1.0,1.0,1.0,23.25
+cohort_z_3h>2,0.9079,0.4192,0.5736,9,5,0.4444,1.0,0.6154,17.65
+cohort_z_24h>1,0.6162,0.5076,0.5567,7,4,0.4286,0.8,0.5581,19.8125

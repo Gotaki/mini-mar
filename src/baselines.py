@@ -13,6 +13,7 @@ BAD_SIGN = {"drop_rate": 1, "setup_fail_rate": 1, "attach_fail_rate": 1, "throug
 
 def bad_z(df: pd.DataFrame, prefix: str) -> np.ndarray:
     """Worst directional z-score across metrics, e.g. prefix='zc24h' uses zc24h_drop_rate, ..."""
+    # Flip metrics where low values are harmful so every score points toward "bad".
     return np.column_stack([s * df[f"{prefix}_{m}"].to_numpy() for m, s in BAD_SIGN.items()]).max(axis=1)
 
 
@@ -21,6 +22,7 @@ def static_threshold(df: pd.DataFrame, q: float = 0.999) -> np.ndarray:
     flag = np.zeros(len(df), dtype=bool)
     for m, s in BAD_SIGN.items():
         lim = df[m].quantile(q if s > 0 else 1 - q)
+        # Flag a row if any metric crosses its threshold in the harmful direction.
         flag |= (df[m] > lim).to_numpy() if s > 0 else (df[m] < lim).to_numpy()
     return flag
 
@@ -39,12 +41,14 @@ def main() -> None:
     truth = load_truth()
     summaries, per_incident = [], []
     for name, fn in DETECTORS.items():
+        # Keep the identifying fields alongside each detector's prediction for evaluation.
         d = df[["service_id", "cohort", "ts", "incident_id"]].copy()
         d["flag"] = fn(df)
         s, per = evaluate(name, d, truth)
         summaries.append(s)
         per_incident += per
 
+    # Save aggregate metrics separately from detector performance on each incident.
     summary = pd.DataFrame(summaries).set_index("detector")
     per = pd.DataFrame(per_incident)
     pd.set_option("display.width", 200)
